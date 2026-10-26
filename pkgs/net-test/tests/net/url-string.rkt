@@ -247,6 +247,13 @@
         (url->string (path->url (bytes->path #"\\\\?\\c:\\a\\b\\" 'windows)))
         => "file:///c:/a/b/")
 
+  (for ([kind '(unix windows)])
+    (for ([u (list (make-url #f #f #f #f #f '() '() #f)
+                   (string->url "")
+                   (string->url "?query#fragment"))])
+      (test (path->bytes (url->path u kind)) => #"."
+            (path-convention-type (url->path u kind)) => kind)))
+
   (test
    (path->bytes (url->path (path->url (bytes->path #"/a/b/c" 'unix)) 'unix))
    => #"/a/b/c"

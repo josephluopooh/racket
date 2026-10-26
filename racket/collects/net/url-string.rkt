@@ -394,9 +394,13 @@
                 (map string->path-element/same (cdr strs)))]
         [else (error 'file://->path "no path elements: ~e" url)])
       (let ([elems (map string->path-element/same strs)])
-        (if (url-path-absolute? url)
-          (apply build-path (bytes->path #"/" 'unix) elems)
-          (apply build-path elems))))))
+        (cond
+          [(url-path-absolute? url)
+           (apply build-path (bytes->path #"/" 'unix) elems)]
+          [(null? elems)
+           (build-path/convention-type kind 'same)]
+          [else
+           (apply build-path elems)])))))
 
 (define (url->path url [kind (system-path-convention-type)])
   (file://->path url kind))
